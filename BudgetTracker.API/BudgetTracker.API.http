@@ -1,0 +1,6 @@
+@BudgetTracker.API_HostAddress = http://localhost:5190
+
+GET {{BudgetTracker.API_HostAddress}}/
+Accept: application/json
+
+###
