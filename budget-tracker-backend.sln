@@ -1,15 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetTracker.API", "BudgetTracker.API\BudgetTracker.API.csproj", "{FD043E7E-3F47-4841-B356-1084C816DBAB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11082EC5-E9D6-4BCC-A7A2-92E0CA61719E} = {11082EC5-E9D6-4BCC-A7A2-92E0CA61719E}
+		{9852D46B-EECD-44C9-8DB7-AFAF5E4D07E4} = {9852D46B-EECD-44C9-8DB7-AFAF5E4D07E4}
+		{FC915B0D-EF5C-4CC6-880D-888C24B42F4E} = {FC915B0D-EF5C-4CC6-880D-888C24B42F4E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetTracker.Core", "BudgetTracker.Core\BudgetTracker.Core.csproj", "{9852D46B-EECD-44C9-8DB7-AFAF5E4D07E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetTracker.BL", "BudgetTracker.BL\BudgetTracker.BL.csproj", "{FC915B0D-EF5C-4CC6-880D-888C24B42F4E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11082EC5-E9D6-4BCC-A7A2-92E0CA61719E} = {11082EC5-E9D6-4BCC-A7A2-92E0CA61719E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetTracker.DAL", "BudgetTracker.DAL\BudgetTracker.DAL.csproj", "{11082EC5-E9D6-4BCC-A7A2-92E0CA61719E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9852D46B-EECD-44C9-8DB7-AFAF5E4D07E4} = {9852D46B-EECD-44C9-8DB7-AFAF5E4D07E4}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
