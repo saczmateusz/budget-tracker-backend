@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BudgetTracker.DAL\BudgetTracker.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
