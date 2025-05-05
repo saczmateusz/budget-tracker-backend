@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BudgetTracker.BL\BudgetTracker.BL.csproj" />
     <ProjectReference Include="..\BudgetTracker.Core\BudgetTracker.Core.csproj" />
     <ProjectReference Include="..\BudgetTracker.DAL\BudgetTracker.DAL.csproj" />
