@@ -1,4 +1,4 @@
-﻿using BudgetTracker.BL.Interfaces;
+﻿using BudgetTracker.BL.Services.Interfaces;
 using BudgetTracker.DAL.DTOs.Auth;
 using Microsoft.AspNetCore.Mvc;
 

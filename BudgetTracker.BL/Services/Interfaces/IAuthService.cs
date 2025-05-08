@@ -1,6 +1,6 @@
 ﻿using BudgetTracker.DAL.DTOs.Auth;
 
-namespace BudgetTracker.BL.Interfaces
+namespace BudgetTracker.BL.Services.Interfaces
 {
     public interface IAuthService
     {

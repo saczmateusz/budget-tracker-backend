@@ -14,5 +14,7 @@ namespace BudgetTracker.DAL.DTOs.Auth
         public string Login { get; set; } = string.Empty;
         [Required]
         public string Password { get; set; } = string.Empty;
+        [Required]
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }
