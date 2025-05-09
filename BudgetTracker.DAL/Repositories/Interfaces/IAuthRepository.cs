@@ -13,6 +13,7 @@ namespace BudgetTracker.DAL.Repositories.Interfaces
 
         //public Task<Auth?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
         public Task<Auth?> GetByLogin(string login, CancellationToken cancellationToken = default);
+        public Task<Auth?> GetByRegisterGuid(Guid registerGuid, CancellationToken cancellationToken = default);
         //public Task<bool> IsLoginInUse(string login, CancellationToken cancellationToken = default);
         public Task<bool> IsEmailInUse(string email, CancellationToken cancellationToken = default);
     }

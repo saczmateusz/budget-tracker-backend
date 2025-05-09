@@ -88,9 +88,28 @@ namespace BudgetTracker.BL.Services
         {
             throw new NotImplementedException();
         }
-        public Task ActivateUserAsync(Guid registerGuid, CancellationToken cancellationToken = default)
+        public async Task ActivateUserAsync(Guid registerGuid, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (registerGuid == Guid.Empty)
+            {
+                throw new ValidationException(ValidationError.InvalidRegisterGuid.ToString());
+            }
+            var auth = await UOW.Auths.GetByRegisterGuid(registerGuid, cancellationToken);
+            if (auth is null)
+            {
+                throw new ValidationException(ValidationError.ActivateUserFailed.ToString());
+            } else if (auth.RegisterActivated)
+            {
+                throw new ValidationException(ValidationError.UserAlreadyActivated.ToString());
+            } /* else if activation expired */
+
+            auth.Active = true;
+            auth.RegisterActivated = true;
+            auth.RegisterGuid = null;
+            await UOW.SaveAsync(cancellationToken);
+
+            // TODO: SEND ACTIVATION CONFIRMATION EMAIL
+
         }
     }
 }

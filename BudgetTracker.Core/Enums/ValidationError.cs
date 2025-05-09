@@ -5,6 +5,9 @@
         LoginInactiveUserExists,
         LoginInUse,
         EmailInUse,
-        PasswordsDoNotMatch
+        PasswordsDoNotMatch,
+        InvalidRegisterGuid,
+        ActivateUserFailed,
+        UserAlreadyActivated
     }
 }
