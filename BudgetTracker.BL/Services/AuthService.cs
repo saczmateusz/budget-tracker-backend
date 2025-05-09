@@ -3,6 +3,7 @@ using BudgetTracker.Core.Domain;
 using BudgetTracker.Core.Enums;
 using BudgetTracker.DAL.DTOs.Auth;
 using BudgetTracker.DAL.Services.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace BudgetTracker.BL.Services
 {
@@ -17,34 +18,27 @@ namespace BudgetTracker.BL.Services
 
         private async Task VerifyLoginIsUsed(string login, CancellationToken cancellationToken = default)
         {
-            //var auth = await UOW.Auths.GetByLogin(login, cancellationToken);
-            //if (auth is not null)
-            //{
-            //    if (!auth.Active || !auth.RegisterActivated)
-            //    {
-            //        //throw ValidationException<RegisterDTO>.CreateException(x => x.Login, ValidationError.LoginInactiveUserExists);
-            //    }
-            //    else
-            //    {
-            //        //throw ValidationException<RegisterDTO>.CreateException(x => x.Login, ValidationError.LoginInUse);
-            //    }
-            //}
+            var auth = await UOW.Auths.GetByLogin(login, cancellationToken);
+            if (auth is not null)
+            {
+                if (!auth.Active || !auth.RegisterActivated)
+                {
+                    throw new ValidationException(ValidationError.LoginInactiveUserExists.ToString());
+                }
+                else
+                {
+                    throw new ValidationException(ValidationError.LoginInUse.ToString());
+                }
+            }
         }
 
         private async Task VerifyEmailIsUsed(string email, CancellationToken cancellationToken = default)
         {
-            //var auth = await UOW.Auths.GetByEmail(email, cancellationToken);
-            //if (auth is not null)
-            //{
-            //    if (!auth.Active || !auth.RegisterActivated)
-            //    {
-            //        //throw ValidationException<RegisterDTO>.CreateException(x => x.Email, ValidationError.EmailInactiveUserExists);
-            //    }
-            //    else
-            //    {
-            //        //throw ValidationException<RegisterDTO>.CreateException(x => x.Email, ValidationError.EmailInUse);
-            //    }
-            //}
+            var emailInUse = await UOW.Auths.IsEmailInUse(email, cancellationToken);
+            if (emailInUse)
+            {
+                throw new ValidationException(ValidationError.EmailInUse.ToString());
+            }
         }
 
         public Task<TokenDTO> LoginAsync(LoginDTO dto, CancellationToken cancellationToken = default)
@@ -58,7 +52,7 @@ namespace BudgetTracker.BL.Services
 
             if (dto.Password != dto.ConfirmPassword)
             {
-                //throw ValidationException<RegisterDTO>.CreateException(x => x.Password, ValidationError.PasswordsDoNotMatch);
+                throw new ValidationException(ValidationError.PasswordsDoNotMatch.ToString());
             }
 
             await VerifyLoginIsUsed(dto.Login, cancellationToken);
@@ -70,7 +64,7 @@ namespace BudgetTracker.BL.Services
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
             };
-            //UOW.Users.Create(user);
+            UOW.Users.Create(user);
 
             var auth = new Auth()
             {

@@ -12,8 +12,8 @@ namespace BudgetTracker.DAL.Repositories.Interfaces
         //public void Delete(Auth entityToDelete);
 
         //public Task<Auth?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-        //public Task<Auth?> GetByLogin(string login, CancellationToken cancellationToken = default);
+        public Task<Auth?> GetByLogin(string login, CancellationToken cancellationToken = default);
         //public Task<bool> IsLoginInUse(string login, CancellationToken cancellationToken = default);
-        //public Task<bool> IsEmailInUse(Guid accountId, string email, CancellationToken cancellationToken = default);
+        public Task<bool> IsEmailInUse(string email, CancellationToken cancellationToken = default);
     }
 }

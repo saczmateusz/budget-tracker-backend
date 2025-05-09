@@ -9,14 +9,15 @@ namespace BudgetTracker.DAL.Services
         private bool _disposed = false;
         private readonly BudgetTrackerContext _context;
 
-        //public IUserRepository Users { get; }
+        public IUserRepository Users { get; }
         public IAuthRepository Auths { get; }
         //public ICategoryRepository Categories { get; }
         //public IOperationRepository Operations { get; }
 
-        public UnitOfWork(BudgetTrackerContext context, IAuthRepository auths)
+        public UnitOfWork(BudgetTrackerContext context, IUserRepository users, IAuthRepository auths)
         {
             _context = context;
+            Users = users;
             Auths = auths;
         }
 

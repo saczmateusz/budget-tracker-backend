@@ -4,7 +4,7 @@ namespace BudgetTracker.DAL.Services.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        //public IUserRepository Users { get; }
+        public IUserRepository Users { get; }
         public IAuthRepository Auths { get; }
         //public ICategoryRepository Categories { get; }
         //public IOperationRepository Operations { get; }

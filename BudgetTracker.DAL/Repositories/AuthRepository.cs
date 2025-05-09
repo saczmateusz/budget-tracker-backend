@@ -20,5 +20,17 @@ namespace BudgetTracker.DAL.Repositories
         {
             _entities.Add(entity);
         }
+
+        public async Task<Auth?> GetByLogin(string login, CancellationToken cancellationToken)
+        {
+            var result = await _context.Auths.FirstOrDefaultAsync(x => x.Login == login, cancellationToken);
+            return result;
+        }
+
+        public async Task<bool> IsEmailInUse(string email, CancellationToken cancellationToken = default)
+        {
+            var result = await _context.Auths.AnyAsync(x => x.Email == email, cancellationToken);
+            return result;
+        }
     }
 }
