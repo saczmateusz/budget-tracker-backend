@@ -10,10 +10,12 @@ namespace BudgetTracker.BL.Services
     public class AuthService : IAuthService
     {
         protected readonly IUnitOfWork UOW;
+        private readonly IHashService _hashService;
 
-        public AuthService(IUnitOfWork uow)
+        public AuthService(IUnitOfWork uow, IHashService hashService)
         {
             UOW = uow;
+            _hashService = hashService;
         }
 
         private async Task VerifyLoginIsUsed(string login, CancellationToken cancellationToken = default)
@@ -71,7 +73,7 @@ namespace BudgetTracker.BL.Services
                 Id = registerGuid,
                 Email = dto.Email,
                 Login = dto.Login,
-                //Password = _hashService.HashPassword(dto.Password),
+                Password = _hashService.HashPassword(dto.Password),
                 AuthRole = AuthRole.User,
                 RegisterGuid = Guid.NewGuid(),
                 RegisterActivated = false,
@@ -79,9 +81,8 @@ namespace BudgetTracker.BL.Services
             };
             UOW.Auths.Create(auth);
             await UOW.SaveAsync(CancellationToken.None);
-
-
-            throw new NotImplementedException();
+            // TODO: fill basic props like datecreated etc.
+            // TODO: SEND ACTIVATION EMAIL
         }
         public Task<TokenDTO> RefreshSessionAsync(string refreshToken, CancellationToken cancellationToken = default)
         {
