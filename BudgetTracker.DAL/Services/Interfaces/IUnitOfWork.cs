@@ -6,6 +6,8 @@ namespace BudgetTracker.DAL.Services.Interfaces
     {
         public IUserRepository Users { get; }
         public IAuthRepository Auths { get; }
+        public IRefreshTokenRepository RefreshTokens { get; }
+
         //public ICategoryRepository Categories { get; }
         //public IOperationRepository Operations { get; }
 

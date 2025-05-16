@@ -11,14 +11,17 @@ namespace BudgetTracker.DAL.Services
 
         public IUserRepository Users { get; }
         public IAuthRepository Auths { get; }
+        public IRefreshTokenRepository RefreshTokens { get; }
+
         //public ICategoryRepository Categories { get; }
         //public IOperationRepository Operations { get; }
 
-        public UnitOfWork(BudgetTrackerContext context, IUserRepository users, IAuthRepository auths)
+        public UnitOfWork(BudgetTrackerContext context, IUserRepository users, IAuthRepository auths, IRefreshTokenRepository refreshTokens)
         {
             _context = context;
             Users = users;
             Auths = auths;
+            RefreshTokens = refreshTokens;
         }
 
         public async Task SaveAsync(CancellationToken cancellationToken = default)

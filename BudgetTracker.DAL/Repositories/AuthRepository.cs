@@ -27,6 +27,12 @@ namespace BudgetTracker.DAL.Repositories
             return result;
         }
 
+        public async Task<Auth?> GetByEmail(string email, CancellationToken cancellationToken)
+        {
+            var result = await _context.Auths.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+            return result;
+        }
+
         public async Task<Auth?> GetByRegisterGuid(Guid registerGuid, CancellationToken cancellationToken)
         {
             var result = await _context.Auths.FirstOrDefaultAsync(x => x.RegisterGuid == registerGuid, cancellationToken);

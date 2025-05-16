@@ -10,6 +10,8 @@ namespace BudgetTracker.BL.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly int _accessTokenExpirationMinutes;
+        private readonly int _refreshTokenExpirationMinutes;
         private readonly int _registerAuthActivityHours;
 
         protected readonly IUnitOfWork UOW;
@@ -19,6 +21,8 @@ namespace BudgetTracker.BL.Services
         {
             UOW = uow;
             _hashService = hashService;
+            _accessTokenExpirationMinutes = int.Parse(configuration.GetSection("Auth:AccessTokenExpirationMinutes").Value!);
+            _refreshTokenExpirationMinutes = int.Parse(configuration.GetSection("Auth:RefreshTokenExpirationMinutes").Value!);
             _registerAuthActivityHours = int.Parse(configuration.GetSection("Auth:RegisterTokenActivityHours").Value!);
         }
 
@@ -47,10 +51,70 @@ namespace BudgetTracker.BL.Services
             }
         }
 
-        public Task<TokenDTO> LoginAsync(LoginDTO dto, CancellationToken cancellationToken = default)
+        public async Task<TokenDTO> LoginAsync(LoginDTO dto, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            Auth? auth = null;
+            try
+            {
+                if (dto.Login.Contains('@'))
+                {
+                    auth = await UOW.Auths.GetByEmail(dto.Login, cancellationToken);
+                }
+                else
+                {
+                    auth = await UOW.Auths.GetByLogin(dto.Login, cancellationToken);
+                }
+                if (auth is null)
+                {
+                    throw new Exception();
+                }
+                if (!auth.Active)
+                {
+                    throw new Exception();
+                }
+                if (!_hashService.VerifyPassword(dto.Password, auth.Password))
+                {
+                    throw new Exception();
+                }
+
+                var refreshToken = await UOW.RefreshTokens.GetUserLatestRefreshToken(auth.Id, cancellationToken);
+
+                var tokenString = _hashService.GenerateToken(auth, _accessTokenExpirationMinutes);
+                if (refreshToken is null)
+                {
+                    refreshToken = await CreateRefreshToken(auth.Id, cancellationToken);
+                }
+                else
+                {
+                    await ResetRefreshTokenExpirationTime(refreshToken, cancellationToken);
+                }
+
+                var result = new TokenDTO()
+                {
+                    AccessToken = tokenString,
+                    RefreshToken = _hashService.SignRefreshToken(refreshToken),
+                };
+                return result;
+            }
+            catch (Exception)
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
+        private async Task<RefreshToken> CreateRefreshToken(Guid authId, CancellationToken cancellationToken = default)
+        {
+            var refreshToken = _hashService.GenerateRefreshToken(authId, _refreshTokenExpirationMinutes);
+            UOW.RefreshTokens.Create(refreshToken);
+            await UOW.SaveAsync(cancellationToken);
+            return refreshToken;
+        }
+        private async Task ResetRefreshTokenExpirationTime(RefreshToken refreshToken, CancellationToken cancellationToken = default)
+        {
+            UOW.RefreshTokens.Attach(refreshToken);
+            refreshToken.Expiration = DateTime.UtcNow.AddMinutes(_refreshTokenExpirationMinutes);
+            await UOW.SaveAsync(cancellationToken);
+        }
+
         public async Task RegisterAsync(RegisterDTO dto, CancellationToken cancellationToken = default)
         {
             var creationTime = DateTime.UtcNow;

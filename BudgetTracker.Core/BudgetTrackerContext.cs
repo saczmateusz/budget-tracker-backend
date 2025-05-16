@@ -15,6 +15,7 @@ namespace BudgetTracker.Core
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Auth> Auths { get; set; } = null!;
+        public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Operation> Operations { get; set; } = null!;
 
@@ -34,6 +35,11 @@ namespace BudgetTracker.Core
             builder.Entity<Auth>().Property<bool>(_keyIsDeleted);
             builder.Entity<Auth>().HasQueryFilter(x => EF.Property<bool>(x, _keyIsDeleted) == false);
             builder.Entity<Auth>().Property(x => x.AuthRole).HasConversion<string>();
+
+
+            builder.Entity<RefreshToken>().Property<bool>(_keyIsDeleted);
+            builder.Entity<RefreshToken>().HasQueryFilter(x => EF.Property<bool>(x, _keyIsDeleted) == false);
+            builder.Entity<RefreshToken>().HasIndex(x => x.UserId);
 
 
             builder.Entity<User>().Property<bool>(_keyIsDeleted);
