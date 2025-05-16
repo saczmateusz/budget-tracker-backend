@@ -8,6 +8,7 @@
         PasswordsDoNotMatch,
         InvalidRegisterGuid,
         ActivateUserFailed,
+        ActivateUserExpired,
         UserAlreadyActivated
     }
 }

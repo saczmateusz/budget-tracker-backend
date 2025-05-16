@@ -3,19 +3,23 @@ using BudgetTracker.Core.Domain;
 using BudgetTracker.Core.Enums;
 using BudgetTracker.DAL.DTOs.Auth;
 using BudgetTracker.DAL.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 
 namespace BudgetTracker.BL.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly int _registerAuthActivityHours;
+
         protected readonly IUnitOfWork UOW;
         private readonly IHashService _hashService;
 
-        public AuthService(IUnitOfWork uow, IHashService hashService)
+        public AuthService(IUnitOfWork uow, IConfiguration configuration, IHashService hashService)
         {
             UOW = uow;
             _hashService = hashService;
+            _registerAuthActivityHours = int.Parse(configuration.GetSection("Auth:RegisterTokenActivityHours").Value!);
         }
 
         private async Task VerifyLoginIsUsed(string login, CancellationToken cancellationToken = default)
@@ -80,8 +84,8 @@ namespace BudgetTracker.BL.Services
                 Active = false,
             };
             UOW.Auths.Create(auth);
+
             await UOW.SaveAsync(CancellationToken.None);
-            // TODO: fill basic props like datecreated etc.
             // TODO: SEND ACTIVATION EMAIL
         }
         public Task<TokenDTO> RefreshSessionAsync(string refreshToken, CancellationToken cancellationToken = default)
@@ -101,7 +105,10 @@ namespace BudgetTracker.BL.Services
             } else if (auth.RegisterActivated)
             {
                 throw new ValidationException(ValidationError.UserAlreadyActivated.ToString());
-            } /* else if activation expired */
+            } else if ((DateTime.UtcNow - auth.DateModified).TotalHours >= _registerAuthActivityHours)
+            {
+                throw new ValidationException(ValidationError.ActivateUserExpired.ToString());
+            }
 
             auth.Active = true;
             auth.RegisterActivated = true;

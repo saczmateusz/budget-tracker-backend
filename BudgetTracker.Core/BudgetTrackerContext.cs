@@ -1,4 +1,5 @@
 ﻿using BudgetTracker.Core.Domain;
+using BudgetTracker.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetTracker.Core
@@ -74,6 +75,59 @@ namespace BudgetTracker.Core
                 .OnDelete(DeleteBehavior.NoAction); // TODO: cascade?
         }
 
+        // ----------------------------------------------
+
+        public override int SaveChanges()
+        {
+            UpdateCoreProperties();
+            return base.SaveChanges();
+        }
+        public int SaveChangesNoSideEffect()
+        {
+            UpdateCoreProperties(true);
+            return base.SaveChanges();
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            UpdateCoreProperties();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+        public Task<int> SaveChangesNoSideEffectAsync(CancellationToken cancellationToken = default)
+        {
+            UpdateCoreProperties(true);
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
         // TODO: override save methods - update properties like "created by" etc. by default
+        private void UpdateCoreProperties(bool noSideEffect = false)
+        {
+            var allTrackedEntities = ChangeTracker.Entries().ToList();
+            var trackedEntities = allTrackedEntities.Where(x => x.State == EntityState.Added ||
+                                                                x.State == EntityState.Modified ||
+                                                                x.State == EntityState.Deleted)
+                                                    .ToList();
+            foreach (var entry in trackedEntities)
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        if (!noSideEffect)
+                        {
+                            entry.CurrentValues[nameof(IDomainEntity.IsDeleted)] = false;
+                            entry.CurrentValues[nameof(IDomainEntity.DateCreated)] = DateTime.UtcNow;
+                            entry.CurrentValues[nameof(IDomainEntity.DateModified)] = DateTime.UtcNow;
+                        }
+                        break;
+
+                    case EntityState.Modified:
+                    case EntityState.Deleted:
+                        if (!noSideEffect)
+                        {
+                            entry.CurrentValues[nameof(IDomainEntity.DateModified)] = DateTime.UtcNow;
+                        }
+                        break;
+                }
+            }
+        }
     }
 }
